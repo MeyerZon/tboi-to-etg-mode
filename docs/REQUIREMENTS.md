@@ -80,7 +80,7 @@ Legend for verification tags used below: **[V]** verified against a primary sour
 | CHR-7 | Tear projectile: full TBOI behaviour (decided, Q-tears). Tears spawn at tear height, fall so they land at `Range`, size scales with damage (`PlayerBulletScale`), knockback from shot speed, `shouldRotate=false`. Arc implemented with `Projectile` velocity modifiers or a custom component. Hit VFX reuse a vanilla `ProjectileImpactVFXPool` recoloured until tear-splash art exists. | [V] components, [I] arc | Must |
 | CHR-8 | Isaac cannot acquire guns: prefix patch on `Gun.Pickup` (Modular's pattern) and on `LootEngine.GivePrefabToPlayer`, plus `GunInventory.GunLocked.SetOverride("isaac", true)`. Any gun that still reaches the floor is converted to an Isaac item drop (safety net; MOD-7). | [V] hooks | Must |
 | CHR-9 | Full animation set delivered as PNG frame folders under `newspritesetup/` named exactly like Alexandria's `playerAnimInfo` clips (`idle`, `run_*`, `dodge*`, `death*`, `doorway`, `item_get`, `pitfall*`, `slide_*`, `spinfall`, `ghost_*`, `jetpack_*`, `pet`, `tablekick*`, `chest_recover`, `select_*` and their `_hand`/`_twohands` variants). Plus `foyercard/`, `loadoutsprites/`, `punchout/`, `icon.png`, `facecard.png`, `bosscard_*.png`, `win_pic*.png`, `coop_page_death.png`. Until real art exists every sprite is a flat coloured square (decided, Q7). | [V] | Must (placeholders first, see §10) |
-| CHR-14 | **Asset source switch**: all sprites load through one asset loader that first looks in an external folder next to the DLL (`BepInEx/plugins/IsaacMode/assets/`, same layout as `Resources/`) and falls back to the embedded placeholders. The external folder is where the owner places TBOI sprite sheets extracted from their own copy of the game. Those files are never committed and never shipped in the Thunderstore package (see §8). A converter tool (`tools/`, Python) turns TBOI `.anm2` + sheet exports into ETG frame folders. | [I] | Must (M1) |
+| CHR-14 | **Sprite pipeline**: sprites are embedded resources like everything else. Until the owner extracts the TBOI sheets, every sprite is a flat coloured square. A converter tool (`tools/`, Python) turns TBOI `.anm2` + sheet exports into the ETG frame folders Alexandria expects, written straight into `Resources/`. No external asset folder, no runtime switch (decided after the precedent research, §8). | [I] | Must (M1) |
 | CHR-10 | Strings: name, short name, nickname ("The Child"? to decide) registered through CharacterAPI string keys; Ammonomicon entries for Tears and items via MtG API `StringDB`. English first; other languages optional through `GungeonSupportedLanguages` overloads. | [V] | Must / Could |
 | CHR-11 | Breach presence: character select stand with prerequisites empty (always unlocked) in v0.1; alt costume (`newaltspritesetup/`) is a Could. Co-op: Isaac must at least not crash when chosen by player 2; parity for the Cultist slot is a Could. | [V] | Must / Could |
 | CHR-12 | Mid-game save and elevator reload must restore Isaac correctly (CharacterAPI handles identity; custom health state from HLT-x must be serialised via a run-data carrier item, GungeonCraft `CwaffRunData` pattern). | [V] pattern | Must |
@@ -219,13 +219,16 @@ The full verified `StatType` list (31 members) is in [api-patterns.md](research/
 
 ## 8. Intellectual property and asset policy
 
-1. **Art**: all sprites are original "in the style of" pixel art. Ripping TBOI sprites is unlicensed copying of Nicalis-owned assets and breaches Thunderstore's global rule against reuploading others' assets; Nicalis has a DMCA record (Cave Story Engine 2, 2020). [V]
-2. **Audio**: no TBOI music or SFX (Ridiculon soundtrack is separately owned). Original or CC0 audio only. [V]
-3. **Names**: item and character names may be referenced; the package/mod name must not contain "The Binding of Isaac", "Rebirth", "Repentance" or publisher marks. README carries a non-affiliation disclaimer. [I]
-4. **Game files**: never commit or ship `Assembly-CSharp.dll` or any ETG file; reference assemblies come from NuGet. Thunderstore forbids distributing game files. [V]
-5. **Licenses**: MIT for code; art/audio under a separate notice excluding third-party IP from the grant. Alexandria and MtG API are MIT; ETGMod is MIT. [V]
-6. **Mechanics** (formulas, drop tables, item behaviours) are not copyrightable and may be re-implemented. [I]
-7. **Owner's decision on sprites (2026-10-05)**: the owner intends to use sprite sheets extracted from their own copy of TBOI for the character and items, once working outside the cloud. To keep points 1 to 4 intact, those files live only in the external asset folder on the owner's machine (CHR-14): they are git-ignored, never pushed to this public repository, and never included in the Thunderstore zip. The published mod ships placeholders (or original art if it is ever made) and loads the owner-supplied sheets when present. Publishing ripped sheets would be redistribution of Nicalis-owned assets and a Thunderstore rule violation; this split keeps the public artefacts clean.
+Decided by the project owner on 2026-10-05 after the precedent survey in [`research/crossover-precedents.md`](research/crossover-precedents.md). That survey found no case in more than ten years of Nicalis or Edmund McMillen acting against an Isaac fan mod, sprite rip or crossover, and hundreds of live Thunderstore crossover mods shipping other games' sprites. The practices that separate "tolerated for years" from "taken down" in the evidence are: free and non-commercial, no soundtrack reuse, trademark kept out of the title, a credit line.
+
+1. **Sprites**: TBOI sprite sheets extracted from the owner's own copy of the game are used directly, committed to the repository and shipped in the Thunderstore package. Until they exist, flat coloured squares. The README and the Thunderstore page credit "Sprites from The Binding of Isaac: Rebirth, property of Nicalis, Inc. and Edmund McMillen; used without permission in a free fan project". Accepted risk: Thunderstore's written rules forbid reuploading others' assets; enforcement there is report-driven and has not been applied to comparable packages. If a rightsholder objects, the sprites are replaced, not argued over. [V evidence, owner's decision]
+2. **Audio**: no TBOI music or sound effects, ever. The music belongs to Ridiculon and Danny Baranowsky, not to Nicalis or McMillen, and Content ID claims hit every player and streamer regardless of goodwill. Original, CC0 or synthesised audio only. [V]
+3. **Money**: the mod is free. No Patreon, donations, sales or sponsorships attached to it. Every lawsuit and cease-and-desist found had monetisation or a full-game port in its profile. [V]
+4. **Names**: item and character names may be referenced; the package/mod name must not contain "The Binding of Isaac", "Rebirth", "Repentance" or publisher marks. README carries a non-affiliation disclaimer. [I]
+5. **Game files**: never commit or ship `Assembly-CSharp.dll` or any ETG file; reference assemblies come from NuGet. Thunderstore forbids distributing game files. [V]
+6. **Licenses**: MIT for code; the LICENSE scope note excludes the TBOI-derived assets from the grant. Alexandria and MtG API are MIT; ETGMod is MIT. [V]
+7. **Mechanics** (formulas, drop tables, item behaviours) are not copyrightable and may be re-implemented. [I]
+8. **If a blessing is sought**: McMillen has standing over the character and designs; the Rebirth sprite files are Nicalis-made. Nicalis has honoured McMillen-led deals (Four Souls, Fortnite) and has no record of answering individual modders. [V/I]
 
 ---
 
@@ -243,7 +246,7 @@ Decided by the project owner on 2026-10-05 unless marked open.
 | Q5 | Keep useful vanilla ETG items in Isaac drops? | **Yes**, mixed with Isaac items; gun-only items excluded (MOD-8). Shop prices rescaled to Isaac income (ECO-1, ECO-2). |
 | Q6 | Which TBOI version is the reference? | Repentance (v1.7.x) values. |
 | Q-items | Is the v0.1 item list (ITM-10) acceptable? | **Yes for now**; to be adjusted later. |
-| Q7 | Character sprite source? | **Placeholders (flat coloured squares) for everything now.** Later, sprite sheets extracted from the owner's copy of TBOI, loaded from the external asset folder (CHR-14, §8 point 7), wired in from the start of M1. |
+| Q7 | Character sprite source? | **Placeholders (flat coloured squares) for everything now.** Later, sprite sheets extracted from the owner's copy of TBOI, committed and shipped directly (CHR-14, §8). The converter tool is wired in from the start of M1. |
 | Q8 | Isaac's nickname and the mod's public name. | Open. Working title "Isaac Mode"; nickname candidate "The Child". |
 | Q9 | Co-op support level. | Open. Must not crash; parity later. |
 | Q-order | Milestone order M1 character, M2 loot, M3 items? | **Agreed.** |
@@ -256,7 +259,7 @@ Decided by the project owner on 2026-10-05 unless marked open.
 | Milestone | Content | Exit criterion |
 |-----------|---------|----------------|
 | M0 Skeleton | Project builds against NuGet refs, loads in game, logs in F2, Thunderstore manifest, CI if feasible, LICENSE, .gitignore | DLL loads with no errors |
-| M1 Tears + Isaac (placeholder art) | Character registered on a vanilla base with square placeholder sprites, asset loader with external-folder override (CHR-14), Tears gun with hidden sprite and full TBOI tear behaviour, stat mapping, gun lock, no blanks, no dodge roll | Isaac playable through floor 1 with no gun pickups, no roll, no blanks |
+| M1 Tears + Isaac (placeholder art) | Character registered on a vanilla base with square placeholder sprites, sheet converter tool (CHR-14), Tears gun with hidden sprite and full TBOI tear behaviour, stat mapping, gun lock, no blanks, no dodge roll | Isaac playable through floor 1 with no gun pickups, no roll, no blanks |
 | M2 Isaac mode loot and economy | Table swap, pedestal override, shop replacement, room-clear table, safety net, seeded runs, no enemy shells, shop price rescale, adaptation prompt with substitute items | A full run yields zero guns, TBOI-style drops and income, and the prompt works |
 | M3 Items v0.1 | 25–40 items from ITM-10, pickups, D6, synergies for multishot | Items drop with correct tiers and effects |
 | M4 Health and HUD | Armor-as-soul-hearts re-skin, 12-heart cap check, stat readout | HUD readable through a full run |
@@ -275,5 +278,5 @@ Decided by the project owner on 2026-10-05 unless marked open.
 | Balance: 3 hearts and TBOI damage numbers do not fit ETG enemy HP and bullet density | Fun | Global damage scaling constant; keep blanks and dodge roll; playtest early |
 | Gun-biased assumptions baked into vanilla (`IsBossRewardForcedGun`, `GunVersusItemPercentChance`, treasure chest gun/item pairing) | Edge cases, log spam | Table swap plus safety net; test every reward source |
 | Other mods patching `Gun.Pickup` or loot (Modular, GungeonCraft) | Conflicts | Guard patches on Isaac mode; test against them |
-| IP takedown if any ripped asset slips in | Mod removed | Asset review before each release; original art only |
+| Rightsholder objects to the TBOI sprites | Package removed from Thunderstore | Accepted risk (§8); replace sprites with original art if it happens; never ship audio or attach money |
 | ETG 2 (announced 2025) is a different codebase | None for this mod | Target stays ETG 1 v2.1.9 |

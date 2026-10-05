@@ -28,6 +28,7 @@ cannot run here; in-game testing happens on the owner's PC (copy the DLL to `Bep
 - `src/IsaacMode/Core/`: game-agnostic logic (TBOI formulas, drop tables). **No Unity, BepInEx or game types here**; the test project compiles these files directly on .NET 8.
 - `src/IsaacMode/Resources/`: embedded assets, addressed as `IsaacMode/Resources/<folder>/<file>`. Placeholder squares until the owner's extracted TBOI sheets replace them (CHR-14).
 - `tests/IsaacMode.Tests/`: xunit.
+- `tools/`: developer scripts (Python, standard library only), for example `make_placeholders.py` which regenerates the placeholder sprites.
 - `thunderstore/`: `manifest.json` and `icon.png` (256x256). Version must match `ModVersion` in `Directory.Build.props`.
 - `docs/`: requirements and research notes.
 

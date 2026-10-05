@@ -1,6 +1,9 @@
+using System;
 using BepInEx;
 using HarmonyLib;
 using Alexandria.Misc;
+using IsaacMode.Character;
+using IsaacMode.Tears;
 
 namespace IsaacMode
 {
@@ -31,15 +34,25 @@ namespace IsaacMode
 
         public void GMStart(GameManager gameManager)
         {
-            CustomActions.OnRunStart += OnRunStart;
-            ETGModConsole.Log($"{NAME} v{VERSION} loaded");
+            try
+            {
+                // The gun must exist before the character: the loadout is resolved by console ID.
+                TearsGun.Init();
+                IsaacCharacter.Init();
+                DebugCommands.Init();
+                CustomActions.OnRunStart += OnRunStart;
+                ETGModConsole.Log($"{NAME} v{VERSION} loaded");
+            }
+            catch (Exception e)
+            {
+                ETGModConsole.Log($"{NAME} v{VERSION} failed to load: {e}");
+                Logger.LogError(e);
+            }
         }
 
         private static void OnRunStart(PlayerController player1, PlayerController player2, GameManager.GameMode mode)
         {
-            // Placeholder until the Isaac character exists (CHR-1): any custom character
-            // identity sits above the last vanilla Gungeoneer in the PlayableCharacters enum.
-            IsaacModeActive = player1 != null && player1.characterIdentity > PlayableCharacters.Gunslinger;
+            IsaacModeActive = player1.IsIsaac();
             ETGModConsole.Log($"{NAME}: run started, Isaac mode {(IsaacModeActive ? "on" : "off")}");
         }
     }

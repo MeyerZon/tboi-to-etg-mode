@@ -1,0 +1,16 @@
+# Isaac (CHR-1 to CHR-4). Parsed by Alexandria's CharacterAPI Loader.
+# Comments are only allowed out here, not inside the <loadout> and <stats> blocks.
+# The vanilla Bomb stands in for the Isaac-style bomb until the item exists (ITM-7).
+base: bullet
+name: Isaac
+name short: Isaac
+nickname: The Child
+armor: 0
+<loadout>
+isaac:tears infinite
+bomb
+</loadout>
+<stats>
+health: 3
+movementspeed: 7
+</stats>

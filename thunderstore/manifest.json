@@ -1,0 +1,11 @@
+{
+  "name": "IsaacMode",
+  "version_number": "0.1.0",
+  "website_url": "https://github.com/MeyerZon/tboi-to-etg-mode",
+  "description": "Adds Isaac as a Gungeoneer who shoots tears, an Isaac run mode with no guns, and Isaac-style items. Unofficial fan project.",
+  "dependencies": [
+    "BepInEx-BepInExPack_EtG-5.4.2101",
+    "MtG_API-Mod_the_Gungeon_API-1.9.2",
+    "Alexandria-Alexandria-0.5.10"
+  ]
+}

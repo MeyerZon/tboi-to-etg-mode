@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Enter the Gungeon runs on Unity 2017.4 (Mono), so mods must target .NET Framework 3.5.
+    This SDK-style project builds on Linux, macOS and Windows with the plain `dotnet` CLI:
+    the Microsoft.NETFramework.ReferenceAssemblies package supplies the net35 reference set,
+    and the game/library reference assemblies come from NuGet (see nuget.config).
+    Game DLLs are never committed or redistributed.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>IsaacMode</AssemblyName>
+    <RootNamespace>IsaacMode</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Only our own DLL goes to the output; BepInEx and Alexandria are installed by the mod manager. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <DebugType>portable</DebugType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- .NET Framework 3.5 reference assemblies so the build works without a Windows .NET install. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+
+    <!-- Loader and hooking stack pinned to what the ETG community ships. -->
+    <PackageReference Include="BepInEx.BaseLib" Version="5.4.21" />
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+    <PackageReference Include="HarmonyX" Version="2.7.0" />
+    <PackageReference Include="MonoMod.RuntimeDetour" Version="21.12.13.1" />
+
+    <!-- Publicized Enter the Gungeon 2.1.9 assemblies, stripped Unity 2017.4 assemblies. -->
+    <PackageReference Include="EtG.GameLibs" Version="2.1.9.1" />
+    <PackageReference Include="EtG.UnityEngine" Version="1.0.0" />
+
+    <!-- Mod the Gungeon API and Alexandria. -->
+    <PackageReference Include="EtG.ModTheGungeonAPI" Version="1.9.2" />
+    <PackageReference Include="EtG.Alexandria" Version="0.5.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Sprites, character data, gun metadata and sound banks ship inside the DLL.
+      Resource names become IsaacMode.Resources.<folder>.<file>, which is what the
+      Alexandria APIs expect when given the path "IsaacMode/Resources/<folder>/<file>".
+    -->
+    <EmbeddedResource Include="Resources/**/*.png;Resources/**/*.txt;Resources/**/*.json;Resources/**/*.jtk2d;Resources/**/*.bnk" />
+  </ItemGroup>
+
+  <!-- Optional: copy the built DLL into the game when EtgPluginsDir is set in local.props. -->
+  <Target Name="CopyToGame" AfterTargets="Build" Condition="'$(EtgPluginsDir)' != '' And Exists('$(EtgPluginsDir)')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(EtgPluginsDir)/IsaacMode" />
+    <Message Importance="high" Text="Copied $(TargetFileName) to $(EtgPluginsDir)/IsaacMode" />
+  </Target>
+
+</Project>

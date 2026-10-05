@@ -1,0 +1,9 @@
+<!--
+  Copy to local.props (git-ignored) to have every build of the mod copied into your game.
+  EtgPluginsDir is the BepInEx plugins folder of your Enter the Gungeon install or r2modman profile.
+-->
+<Project>
+  <PropertyGroup>
+    <EtgPluginsDir>C:\Program Files (x86)\Steam\steamapps\common\Enter the Gungeon\BepInEx\plugins</EtgPluginsDir>
+  </PropertyGroup>
+</Project>

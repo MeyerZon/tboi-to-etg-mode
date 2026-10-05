@@ -34,7 +34,11 @@ namespace IsaacMode
                 return;
             }
 
-            player.ownerlessStatModifiers.Add(StatAPIManager.CreateCustomStatModifier(IsaacStats.Prefix, args[0].ToLower(), amount));
+            // Raise the stat's base value on this player. Ownerless stat modifiers cannot carry custom
+            // stats: the vanilla loop indexes its arrays by stat number and throws. Items are fine.
+            ExtendedPlayerStats ext = player.stats.GetExtComp();
+            string stat = args[0].ToLower();
+            ext.SetBaseStatValue(IsaacStats.Prefix, stat, ext.GetBaseStatValue(IsaacStats.Prefix, stat) + amount);
             player.stats.RecalculateStats(player, true);
             Stats(args);
         }

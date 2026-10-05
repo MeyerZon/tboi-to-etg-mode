@@ -64,6 +64,17 @@ namespace IsaacMode.Tears
             {
                 tk2dSpriteCollectionData collection = gun.GetSprite().Collection;
                 HudIconId = SpriteBuilder.AddSpriteToCollection("IsaacMode/Resources/Guns/Tears/tear_icon", collection, "isaac_tear_icon");
+
+                // The HUD lays the box out around the gun's own sprite, so centre the icon on that sprite.
+                tk2dSpriteDefinition icon = collection.spriteDefinitions[HudIconId];
+                tk2dSpriteDefinition gunSprite = collection.spriteDefinitions[gun.GetSprite().spriteId];
+                Vector3 shift = gunSprite.boundsDataCenter - icon.boundsDataCenter;
+                icon.position0 += shift;
+                icon.position1 += shift;
+                icon.position2 += shift;
+                icon.position3 += shift;
+                icon.boundsDataCenter += shift;
+                icon.untrimmedBoundsDataCenter += shift;
                 HudIconCollection = collection;
             }
             catch (System.Exception e)

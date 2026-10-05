@@ -121,7 +121,7 @@ def body(path, clip, frame=0):
     write_png(path, BODY_W, BODY_H, pixel_at)
 
 
-def tear_icon(path, size=9):
+def tear_icon(path, size=15):
     """A light blue disc with a highlight: the HUD icon for the Tears weapon."""
     centre = (size - 1) / 2.0
     radius = size / 2.0
@@ -130,7 +130,8 @@ def tear_icon(path, size=9):
         dx, dy = x - centre, y - centre
         if dx * dx + dy * dy > radius * radius:
             return (0, 0, 0, 0)
-        if (x, y) in ((2, 2), (3, 2), (2, 3)):
+        hx, hy = x - size * 0.32, y - size * 0.32
+        if hx * hx + hy * hy <= (size * 0.14) ** 2:
             return (235, 248, 255, 255)
         return (120, 190, 240, 255)
 

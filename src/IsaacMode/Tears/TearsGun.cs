@@ -92,6 +92,20 @@ namespace IsaacMode.Tears
                 SetHidden(owner, true);
         }
 
+        private void LateUpdate()
+        {
+            // Belt and braces: whatever re-enabled the gun's renderer this frame, switch it off again
+            // before drawing. Runs after the game's own Update calls.
+            PlayerController owner = gun != null ? gun.CurrentOwner as PlayerController : null;
+            if (owner == null || owner.CurrentGun != gun) return;
+            tk2dBaseSprite gunSprite = gun.GetSprite();
+            if (gunSprite != null && gunSprite.renderer != null && gunSprite.renderer.enabled)
+            {
+                gunSprite.renderer.enabled = false;
+                SpriteOutlineManager.ToggleOutlineRenderers(gunSprite, false);
+            }
+        }
+
         private static void SetHidden(PlayerController player, bool hidden)
         {
             if (player == null) return;

@@ -9,4 +9,7 @@
     <ModVersion>0.1.0</ModVersion>
     <Version>$(ModVersion)</Version>
   </PropertyGroup>
+
+  <!-- Developer-local overrides (game paths); see local.props.example. -->
+  <Import Project="$(MSBuildThisFileDirectory)local.props" Condition="Exists('$(MSBuildThisFileDirectory)local.props')" />
 </Project>

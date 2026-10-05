@@ -49,4 +49,10 @@
     <EmbeddedResource Include="Resources/**/*.png;Resources/**/*.txt;Resources/**/*.json;Resources/**/*.jtk2d;Resources/**/*.bnk" />
   </ItemGroup>
 
+  <!-- Optional: copy the built DLL into the game when EtgPluginsDir is set in local.props. -->
+  <Target Name="CopyToGame" AfterTargets="Build" Condition="'$(EtgPluginsDir)' != '' And Exists('$(EtgPluginsDir)')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(EtgPluginsDir)/IsaacMode" />
+    <Message Importance="high" Text="Copied $(TargetFileName) to $(EtgPluginsDir)/IsaacMode" />
+  </Target>
+
 </Project>

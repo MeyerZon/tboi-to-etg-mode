@@ -3,7 +3,7 @@ Mod for etg, that will add Isaac, and Isaac gamemode into the game (standard tbo
 
 ## Status
 
-Milestone M0 (project skeleton): builds and tests run, no gameplay yet.
+Milestone M1 in progress: Isaac is playable with the Tears weapon. [Where we stopped](docs/LAST_SESSION.md) has the current state and the next check.
 
 - [TODO](TODO.md): every milestone and task, with what is done.
 - [How to work on this mod](docs/WORKFLOW.md): the cloud-session loop, getting builds, testing in game, releasing.
@@ -29,5 +29,9 @@ To test in game, copy `IsaacMode.dll` to `<Enter the Gungeon>/BepInEx/plugins/Is
 ## Installing (players)
 
 Not released yet. The mod will be published on Thunderstore for installation with r2modman, Gale or Thunderstore Mod Manager.
+
+## Credits
+
+Sprites from The Binding of Isaac: Rebirth, property of Nicalis, Inc. and Edmund McMillen; used without permission in a free fan project.
 
 Unofficial fan project. Not affiliated with or endorsed by Nicalis, Inc., Edmund McMillen, Dodge Roll or Devolver Digital.

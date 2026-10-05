@@ -23,8 +23,10 @@ SOFTWARE.
 ---
 
 Scope note. This license covers the source code in this repository. Art, audio
-and other creative assets under src/IsaacMode/Resources are original fan works
-provided for use with this mod only and are not covered by the grant above.
+and other creative assets under src/IsaacMode/Resources are not covered by the
+grant above. Sprites there that come from The Binding of Isaac: Rebirth remain
+the property of Nicalis, Inc. and Edmund McMillen and are used without
+permission in a free fan project.
 The Binding of Isaac is the property of Nicalis, Inc. and Edmund McMillen;
 Enter the Gungeon is the property of Dodge Roll and Devolver Digital. This
 project is not affiliated with or endorsed by any of them.

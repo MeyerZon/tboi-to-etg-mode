@@ -39,8 +39,31 @@ namespace IsaacMode.Character
             }
 
             Identity = Data.identity;
+            CentreSprites();
             Loader.SetupCustomBreachAnimation(StoredName, "select_idle", 6, tk2dSpriteAnimationClip.WrapMode.Loop);
             Loader.SetupCustomBreachAnimation(StoredName, "select_choose", 6, tk2dSpriteAnimationClip.WrapMode.Once);
+        }
+
+        /// <summary>
+        /// Alexandria puts each frame's lower-left corner on the player, which is right for a
+        /// 16 px wide sprite. Shift every frame sideways so its centre stays where that one would be.
+        /// </summary>
+        private static void CentreSprites()
+        {
+            if (Data.collection == null) return;
+            string prefix = Data.nameShort + "_";
+            foreach (tk2dSpriteDefinition def in Data.collection.spriteDefinitions)
+            {
+                if (def == null || def.name == null || !def.name.StartsWith(prefix)) continue;
+                float width = def.position1.x - def.position0.x;
+                Vector3 shift = new Vector3((1f - width) / 2f, 0f, 0f);
+                def.position0 += shift;
+                def.position1 += shift;
+                def.position2 += shift;
+                def.position3 += shift;
+                def.boundsDataCenter += shift;
+                def.untrimmedBoundsDataCenter += shift;
+            }
         }
 
         public static bool IsIsaac(this PlayerController player)

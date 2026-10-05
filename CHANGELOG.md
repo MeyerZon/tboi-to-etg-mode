@@ -12,3 +12,4 @@
 - Tears follow the TBOI arc (level flight, then a fall at the end of their range), scale with damage and knock back by shot speed (CHR-7).
 - Custom Isaac stats (tears, luck, damage ups, flat damage, tear height) through StatAPI, driving fire rate, damage and arc height; `isaac addstat` console command (STA-1 to STA-3, ITM-4).
 - The HUD gun box shows a tear icon while the Tears are held (CHR-6).
+- Isaac uses his real sprites: `tools/anm2_to_frames.py` converts the player animations from an extracted copy of the game into the clip folders (CHR-14). Sprite credit added to the README and licence note.

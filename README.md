@@ -30,4 +30,8 @@ To test in game, copy `IsaacMode.dll` to `<Enter the Gungeon>/BepInEx/plugins/Is
 
 Not released yet. The mod will be published on Thunderstore for installation with r2modman, Gale or Thunderstore Mod Manager.
 
+## Credits
+
+Sprites from The Binding of Isaac: Rebirth, property of Nicalis, Inc. and Edmund McMillen; used without permission in a free fan project.
+
 Unofficial fan project. Not affiliated with or endorsed by Nicalis, Inc., Edmund McMillen, Dodge Roll or Devolver Digital.

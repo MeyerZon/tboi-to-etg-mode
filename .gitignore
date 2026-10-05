@@ -23,5 +23,7 @@ thunderstore/IsaacMode.dll
 thunderstore/README.md
 thunderstore/CHANGELOG.md
 
-# Game assemblies must never enter the repository
+# Extracted game assets (external asset folder, see CHR-14) and game assemblies must never enter the repository
+assets/
+*.anm2
 Assembly-CSharp*.dll

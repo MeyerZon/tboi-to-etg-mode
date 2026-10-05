@@ -67,7 +67,9 @@ namespace IsaacMode.Tears
             tear.baseData.damage = (float)GungeonScale.Damage(TearFormulas.BaseDamage);
             tear.baseData.speed = (float)GungeonScale.ProjectileSpeed(TearFormulas.BaseShotSpeed);
             tear.baseData.range = (float)GungeonScale.Range(TearFormulas.BaseRange);
+            tear.baseData.force = TearArc.BaseForce;
             tear.shouldRotate = false;
+            tear.gameObject.AddComponent<TearArc>();
             return tear;
         }
 

@@ -76,5 +76,29 @@ namespace IsaacMode.Tests
         {
             Assert.Equal(expected, TearFormulas.ClampLuckForDrops(luck));
         }
+
+        [Fact]
+        public void TearScaleIsAboutOneAtBaseDamage()
+        {
+            Assert.Equal(1.0153, TearFormulas.TearScale(TearFormulas.BaseDamage), 3);
+        }
+
+        [Fact]
+        public void TearScaleGrowsWithDamage()
+        {
+            Assert.True(TearFormulas.TearScale(10.0) > TearFormulas.TearScale(3.5));
+            Assert.Equal(0.55, TearFormulas.TearScale(-1.0), 6);
+        }
+
+        [Theory]
+        [InlineData(0.0, 0.0)]
+        [InlineData(0.6, 0.0)]
+        [InlineData(0.8, 0.25)]
+        [InlineData(1.0, 1.0)]
+        [InlineData(1.5, 1.0)]
+        public void ArcStaysLevelThenFalls(double progress, double expected)
+        {
+            Assert.Equal(expected, TearFormulas.ArcDrop(progress), 6);
+        }
     }
 }

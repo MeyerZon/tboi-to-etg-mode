@@ -67,6 +67,31 @@ namespace IsaacMode.Core
             return (baseDamage * Math.Sqrt(inner) + flatUps) * multiplier;
         }
 
+        /// <summary>
+        /// Tear sprite scale for an effective damage value: sqrt(d) * 0.23 + d * 0.01 + 0.55,
+        /// which is almost exactly 1 at Isaac's base damage.
+        /// </summary>
+        public static double TearScale(double damage)
+        {
+            if (damage < 0.0) damage = 0.0;
+            return Math.Sqrt(damage) * 0.23 + damage * 0.01 + 0.55;
+        }
+
+        /// <summary>Fraction of the range a tear flies level before it starts to fall.</summary>
+        public const double ArcLevelFraction = 0.6;
+
+        /// <summary>
+        /// How far a tear has fallen, from 0 (still at firing height) to 1 (on the ground), for a
+        /// flight progress of 0..1 along its range. Level at first, then an accelerating drop.
+        /// </summary>
+        public static double ArcDrop(double progress)
+        {
+            if (progress <= ArcLevelFraction) return 0.0;
+            if (progress >= 1.0) return 1.0;
+            double t = (progress - ArcLevelFraction) / (1.0 - ArcLevelFraction);
+            return t * t;
+        }
+
         /// <summary>Luck as used for room-clear drop weighting is clamped to 0..10.</summary>
         public static double ClampLuckForDrops(double luck)
         {

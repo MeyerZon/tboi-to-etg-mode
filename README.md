@@ -5,6 +5,7 @@ Mod for etg, that will add Isaac, and Isaac gamemode into the game (standard tbo
 
 Milestone M0 (project skeleton): builds and tests run, no gameplay yet.
 
+- [TODO](TODO.md): every milestone and task, with what is done.
 - [How to work on this mod](docs/WORKFLOW.md): the cloud-session loop, getting builds, testing in game, releasing.
 - [Requirements](docs/REQUIREMENTS.md): what the mod must do, the technical constraints, open decisions and a roadmap.
 - [Research notes](docs/research/): source-linked notes on the ETG modding toolchain, the Alexandria / Mod the Gungeon API patterns, and the TBOI and ETG mechanics and IP constraints the mod depends on.

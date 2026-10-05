@@ -10,4 +10,5 @@ Planned layout (see docs/REQUIREMENTS.md, CHR-9 and ENV-4):
 - `Guns/Tears/` : the invisible Tears gun sprite and its `.jtk2d` metadata, tear projectile sprites.
 - `Sounds/` : `.bnk` banks generated with `gen-gungeon-audio-bank.py`.
 
-All art and audio must be original. Nothing from The Binding of Isaac may be copied here.
+Sprites from The Binding of Isaac (extracted by the owner) are allowed and credited in the README.
+No TBOI music or sound effects may be placed here (docs/REQUIREMENTS.md, section 8).

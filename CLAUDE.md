@@ -26,7 +26,7 @@ cannot run here; in-game testing happens on the owner's PC (copy the DLL to `Bep
 
 - `src/IsaacMode/Plugin.cs`: BepInEx entry point. Game init goes in `GMStart`, never in `Awake`/`Start`.
 - `src/IsaacMode/Core/`: game-agnostic logic (TBOI formulas, drop tables). **No Unity, BepInEx or game types here**; the test project compiles these files directly on .NET 8.
-- `src/IsaacMode/Resources/`: embedded assets, addressed as `IsaacMode/Resources/<folder>/<file>`. Original art only.
+- `src/IsaacMode/Resources/`: embedded assets, addressed as `IsaacMode/Resources/<folder>/<file>`. Placeholder squares until the owner's extracted TBOI sheets replace them (CHR-14).
 - `tests/IsaacMode.Tests/`: xunit.
 - `thunderstore/`: `manifest.json` and `icon.png` (256x256). Version must match `ModVersion` in `Directory.Build.props`.
 - `docs/`: requirements and research notes.
@@ -36,5 +36,6 @@ cannot run here; in-game testing happens on the owner's PC (copy the DLL to `Bep
 - Keep all patches guarded on `Plugin.IsaacModeActive` (or the Isaac character identity) so other Gungeoneers are untouched.
 - Put TBOI-rule math in `Core/` with a unit test; put ETG wiring (Harmony patches, Alexandria calls) outside `Core/`.
 - `.NET 3.5` BCL only in the mod project: no `Task`, no value tuples, no `string.Join(IEnumerable)`, `System.Linq` is available.
-- No TBOI sprites, music or sounds anywhere in the repository. Names may be referenced; assets may not be copied.
+- TBOI sprites are allowed (owner's decision, REQUIREMENTS.md §8) and credited. **No TBOI music or sound effects, ever**, and nothing that attaches money to the mod.
+- Isaac has no dodge roll and no blanks (MOD-13); never reintroduce either through an item without the adaptation prompt (MOD-14).
 - Bump `ModVersion` in `Directory.Build.props`, `Plugin.VERSION` and `thunderstore/manifest.json` together; add a `CHANGELOG.md` entry.

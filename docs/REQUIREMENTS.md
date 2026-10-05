@@ -1,6 +1,6 @@
 # Requirements: Isaac character, Isaac mode and Isaac items for Enter the Gungeon
 
-Status: draft v0.1 (research complete, no code yet)
+Status: draft v0.2 (decisions from the project owner recorded on 2026-10-05; see section 9)
 Scope source: the repository description
 
 > Mod for etg, that will add Isaac, and Isaac gamemode into the game (standard tboi, but all guns and other incompatible rewards are cut) + Isaac items are added
@@ -30,7 +30,7 @@ Legend for verification tags used below: **[V]** verified against a primary sour
 - "Standard tboi" means TBOI *rules* applied to ETG *content*: the Gungeon's floors and enemies remain, only the player, the item economy and the reward system change. The mod does not recreate TBOI's floors or enemies. [I]
 - "All guns ... are cut" means no gun may be obtained from any source during an Isaac run, and no slot that would normally hold a gun stays empty. Those slots become Isaac items or TBOI-style pickups. [I]
 - "Other incompatible rewards" means rewards that only make sense with guns: ammo pickups (full ammo, spread ammo), gun-only passives (for example clip-size, reload-speed, ammo-capacity items, ammolets that depend on blanks if blanks are removed), gun-specific synergies, and gun merchants' gun stock. [I]
-- "Isaac items are added" means the items are registered with the game. The default is that they drop **only** in Isaac mode and never leak into runs with other characters. Whether they may also appear for other characters is an opt-in configuration setting. [?]
+- "Isaac items are added" means the items are registered with the game and drop **only** in Isaac runs. They never appear for other Gungeoneers. Vanilla ETG items that still make sense without guns keep dropping in Isaac runs alongside them (decided, Q2 and Q5).
 
 ---
 
@@ -77,9 +77,10 @@ Legend for verification tags used below: **[V]** verified against a primary sour
 | CHR-4 | Base stats translated from TBOI Repentance Isaac: 3 red hearts (`Health` 3), speed 1.0 (ETG `MovementSpeed` tuned to feel like Isaac, exact value to be playtested), tears 2.73/s (`RateOfFire` on the Tears gun), damage 3.5 (`Damage` scaled to ETG enemy health, see MEC-2), range 6.5 tiles (`RangeMultiplier`), shot speed 1.0 (`ProjectileSpeed`), luck 0 (custom stat, STA-2). | [V] source values, [I] scaling | Must |
 | CHR-5 | **Tears weapon**: an ETG `Gun` built with `ItemBuilder.BuildGun`, quality `EXCLUDED`, `InfiniteAmmo`, `CanBeDropped=false`, `PreventStartingOwnerFromDropping`, `PersistsOnDeath`, `preventVolleyModifications` as appropriate. Fires a tear projectile; fire mode `Automatic` with cooldown derived from tear delay. It never appears in loot. | [V] | Must |
 | CHR-6 | The gun sprite is invisible (1x1 transparent idle sprite plus matching hand points) or the player is set handless so tears visibly come from Isaac. Ammo HUD is hidden or replaced via Alexandria `CustomAmmoDisplay`. | [I] no API exists | Must |
-| CHR-7 | Tear projectile: original tear sprite, `shouldRotate=false`, size scales with `PlayerBulletScale`, lob/arc toward `Range` implemented with `Projectile` velocity modifiers or a custom component (TBOI: falling speed derived so the tear lands at Range). Knockback from `force` scaled by shot speed. Hit VFX reuse a vanilla `ProjectileImpactVFXPool` recoloured. | [V] components, [I] arc | Must |
+| CHR-7 | Tear projectile: full TBOI behaviour (decided, Q-tears). Tears spawn at tear height, fall so they land at `Range`, size scales with damage (`PlayerBulletScale`), knockback from shot speed, `shouldRotate=false`. Arc implemented with `Projectile` velocity modifiers or a custom component. Hit VFX reuse a vanilla `ProjectileImpactVFXPool` recoloured until tear-splash art exists. | [V] components, [I] arc | Must |
 | CHR-8 | Isaac cannot acquire guns: prefix patch on `Gun.Pickup` (Modular's pattern) and on `LootEngine.GivePrefabToPlayer`, plus `GunInventory.GunLocked.SetOverride("isaac", true)`. Any gun that still reaches the floor is converted to an Isaac item drop (safety net; MOD-7). | [V] hooks | Must |
-| CHR-9 | Full custom animation set delivered as PNG frame folders under `newspritesetup/` named exactly like Alexandria's `playerAnimInfo` clips (`idle`, `run_*`, `dodge*`, `death*`, `doorway`, `item_get`, `pitfall*`, `slide_*`, `spinfall`, `ghost_*`, `jetpack_*`, `pet`, `tablekick*`, `chest_recover`, `select_*` and their `_hand`/`_twohands` variants). Plus `foyercard/`, `loadoutsprites/`, `punchout/`, `icon.png`, `facecard.png`, `bosscard_*.png`, `win_pic*.png`, `coop_page_death.png`. | [V] | Must (minimum viable set first, see §10) |
+| CHR-9 | Full animation set delivered as PNG frame folders under `newspritesetup/` named exactly like Alexandria's `playerAnimInfo` clips (`idle`, `run_*`, `dodge*`, `death*`, `doorway`, `item_get`, `pitfall*`, `slide_*`, `spinfall`, `ghost_*`, `jetpack_*`, `pet`, `tablekick*`, `chest_recover`, `select_*` and their `_hand`/`_twohands` variants). Plus `foyercard/`, `loadoutsprites/`, `punchout/`, `icon.png`, `facecard.png`, `bosscard_*.png`, `win_pic*.png`, `coop_page_death.png`. Until real art exists every sprite is a flat coloured square (decided, Q7). | [V] | Must (placeholders first, see §10) |
+| CHR-14 | **Sprite pipeline**: sprites are embedded resources like everything else. Until the owner extracts the TBOI sheets, every sprite is a flat coloured square. A converter tool (`tools/`, Python) turns TBOI `.anm2` + sheet exports into the ETG frame folders Alexandria expects, written straight into `Resources/`. No external asset folder, no runtime switch (decided after the precedent research, §8). | [I] | Must (M1) |
 | CHR-10 | Strings: name, short name, nickname ("The Child"? to decide) registered through CharacterAPI string keys; Ammonomicon entries for Tears and items via MtG API `StringDB`. English first; other languages optional through `GungeonSupportedLanguages` overloads. | [V] | Must / Could |
 | CHR-11 | Breach presence: character select stand with prerequisites empty (always unlocked) in v0.1; alt costume (`newaltspritesetup/`) is a Could. Co-op: Isaac must at least not crash when chosen by player 2; parity for the Cultist slot is a Could. | [V] | Must / Could |
 | CHR-12 | Mid-game save and elevator reload must restore Isaac correctly (CharacterAPI handles identity; custom health state from HLT-x must be serialised via a run-data carrier item, GungeonCraft `CwaffRunData` pattern). | [V] pattern | Must |
@@ -94,13 +95,17 @@ Legend for verification tags used below: **[V]** verified against a primary sour
 | MOD-3 | Chests: per-floor treasure-room chest pair (vanilla: one gun chest + one item chest) both yield Isaac items. Chest tiers D–S keep working because Isaac items carry ETG qualities (ITM-3). Rainbow/synergy/glitch chests are handled (rainbow: `GameStatsManager.IsRainbowRun` already filters via the swapped table). | [V] | Must |
 | MOD-4 | Boss reward pedestal: `CustomActions.OnRewardPedestalDetermineContents` fills `overrideItemPool` from the Isaac table, also neutralising `IsBossRewardForcedGun`. TBOI flavour: boss drops come from a "Boss pool" subset (stat-ups) when available. | [V] hook, [I] pool | Must |
 | MOD-5 | Shops: Bello's group-2 slots are covered by MOD-2. Sub-shops (Trorc, Flynt, Cursula, Goopton, Old Red) draw from their own tables: replace gun stock in `CustomActions.OnShopItemStarted` (force out of stock + spawn replacement) or prefix `BaseShopController.DoSetup` to swap `shopItems`. Gun-only consumables (ammo) are replaced by TBOI pickups (hearts, keys, bombs, batteries). | [V] hooks | Must |
-| MOD-6 | Room-clear rewards: `RoomRewardAPI.OnRoomRewardDetermineContents` replaces the vanilla pickup roll with the TBOI room-clear table (nothing 22%, card/pill/trinket 8%, coin 15%, heart 15%, key 20%, bomb 15%, chest 5%, luck-weighted). Ammo drops are removed. ETG blanks: keep or remove is a design decision (§9). | [V] table, [?] blanks | Must |
+| MOD-6 | Room-clear rewards: `RoomRewardAPI.OnRoomRewardDetermineContents` replaces the vanilla pickup roll with the TBOI room-clear table (nothing 22%, card/pill/trinket 8%, coin 15%, heart 15%, key 20%, bomb 15%, chest 5%, luck-weighted). Ammo and blank drops are removed. | [V] table | Must |
 | MOD-7 | Safety net: any `Gun` instance that still spawns on the floor (other mods, edge paths, seeded runs) is swapped for an Isaac item at the same position via `LootEngine.SpawnItem`; seeded runs patch `RewardManager.GetItemForSeededRun` too. | [V] | Must |
-| MOD-8 | Incompatible passives excluded: a maintained exclusion list of vanilla items that only affect guns (clip/reload/ammo/gun-capacity items, Ammolets if blanks are removed, gun-switching items). Exclusion is implemented by never including them in the Isaac table; vanilla items that remain useful (hearts, keys, armor, blanks, coolness/curse items, companions) may stay as a configurable "vanilla items in Isaac mode" option. | [I] | Should |
+| MOD-8 | Vanilla ETG items **do** drop in Isaac runs, mixed into the Isaac table at their ETG qualities (decided, Q5), except a maintained exclusion list of items that only affect guns or removed systems: clip/reload/ammo/gun-capacity items, gun-switching items, Ammolets and other blank items, dodge-roll items, and items that grant blanks. | [I] | Must |
 | MOD-9 | Active item charging: Isaac actives use ETG `PerRoom` cooldown type (TBOI room-clear charge), with +2 charge for large rooms as a Could. ETG `Damage`-based charging is not used for Isaac items. | [V] types | Must |
 | MOD-10 | TBOI-style item pedestals and room rewards may be realised with `overrideFunctionPool` to spawn pedestal items directly instead of chests (Could; chests are an acceptable ETG-flavoured substitute). | [V] | Could |
 | MOD-11 | Nothing in Isaac mode may alter save flags, unlocks or Hegemony credit flow for other characters. Mode state is per run only. | [I] | Must |
 | MOD-12 | Mode must not break Boss Rush, shortcuts, Turbo, Challenge, Rainbow or Blessed modes. Blessed mode (gun cycling) is incompatible with Isaac and is disabled or made a no-op for him. | [I] | Should |
+| MOD-13 | **No blanks, no dodge roll** for Isaac (decided, Q3). Blanks start at 0, are never restocked, and blank pickups are removed from Isaac loot; the dodge-roll input is disabled or replaced through Alexandria `CustomDodgeRollAPI`. | [V] APIs | Must |
+| MOD-14 | **Adaptation prompt**: on entering the first floor of an Isaac run, a yes/no prompt asks whether to "adapt to the Gungeon". Yes grants a fixed set of TBOI-style substitute items chosen to compensate for the lost roll and blanks (the exact items are the owner's call, to be decided; candidates include a Holy Mantle style per-room shield and a Book of Shadows style active). No grants nothing. The answer is stored in run data (CHR-12) and never asked again that run. Implementation candidates to verify in source: ETG's existing confirmation dialog UI; fallback is a shrine-style interactable in the starting room offering the items. | [I] | Must (M2) |
+| ECO-1 | **Isaac economy**: enemies drop no shells in Isaac runs (`MoneyMultiplierFromEnemies` 0 or a drop patch). Coins come only from the room-clear table, chests, and shop stock, as in TBOI. | [I] | Must (M2) |
+| ECO-2 | **Shop prices rescaled** to the Isaac income rate (decided, Q5): a global price multiplier for Isaac runs so a treasure-tier item costs about what a TBOI shop item costs relative to income (15 coins against roughly one coin drop per 6 rooms). Tuned from a spreadsheet of expected coins per floor; applies to Bello and the sub-shops. | [I] | Must (M2) |
 
 ### 4.3 D3: Isaac items
 
@@ -127,7 +132,7 @@ Legend for verification tags used below: **[V]** verified against a primary sour
 | HLT-2 | TBOI damage sizes: regular hits = half heart (same as ETG). Jammed enemies deal a full heart in ETG, which mirrors TBOI chapter 4+ full-heart damage; no change needed. | [V] | Must |
 | HLT-3 | Later: faithful soul/black/eternal/bone hearts through a per-player counter component, `HealthHaver.ModifyDamage` interception and a custom HUD (`ToolsCharApi.AddUISprite`). No existing ETG mod implements this; it is new work and must be serialised for mid-game saves. | [I] | Could |
 | HLT-4 | Max health cap 12 hearts as in TBOI; ETG HUD layout must be checked above 10 hearts. | [V] TBOI cap | Should |
-| HLT-5 | Invulnerability frames stay ETG default; Isaac keeps the dodge roll (no TBOI analog) unless a config option removes it (`CustomDodgeRollAPI` can replace it). | [?] | Should |
+| HLT-5 | Invulnerability frames stay ETG default. The dodge roll is removed for Isaac (MOD-13); compensation comes only through the adaptation prompt (MOD-14). | decided | Must |
 
 ### 4.5 Stats and formulas
 
@@ -214,28 +219,38 @@ The full verified `StatType` list (31 members) is in [api-patterns.md](research/
 
 ## 8. Intellectual property and asset policy
 
-1. **Art**: all sprites are original "in the style of" pixel art. Ripping TBOI sprites is unlicensed copying of Nicalis-owned assets and breaches Thunderstore's global rule against reuploading others' assets; Nicalis has a DMCA record (Cave Story Engine 2, 2020). [V]
-2. **Audio**: no TBOI music or SFX (Ridiculon soundtrack is separately owned). Original or CC0 audio only. [V]
-3. **Names**: item and character names may be referenced; the package/mod name must not contain "The Binding of Isaac", "Rebirth", "Repentance" or publisher marks. README carries a non-affiliation disclaimer. [I]
-4. **Game files**: never commit or ship `Assembly-CSharp.dll` or any ETG file; reference assemblies come from NuGet. Thunderstore forbids distributing game files. [V]
-5. **Licenses**: MIT for code; art/audio under a separate notice excluding third-party IP from the grant. Alexandria and MtG API are MIT; ETGMod is MIT. [V]
-6. **Mechanics** (formulas, drop tables, item behaviours) are not copyrightable and may be re-implemented. [I]
+Decided by the project owner on 2026-10-05 after the precedent survey in [`research/crossover-precedents.md`](research/crossover-precedents.md). That survey found no case in more than ten years of Nicalis or Edmund McMillen acting against an Isaac fan mod, sprite rip or crossover, and hundreds of live Thunderstore crossover mods shipping other games' sprites. The practices that separate "tolerated for years" from "taken down" in the evidence are: free and non-commercial, no soundtrack reuse, trademark kept out of the title, a credit line.
+
+1. **Sprites**: TBOI sprite sheets extracted from the owner's own copy of the game are used directly, committed to the repository and shipped in the Thunderstore package. Until they exist, flat coloured squares. The README and the Thunderstore page credit "Sprites from The Binding of Isaac: Rebirth, property of Nicalis, Inc. and Edmund McMillen; used without permission in a free fan project". Accepted risk: Thunderstore's written rules forbid reuploading others' assets; enforcement there is report-driven and has not been applied to comparable packages. If a rightsholder objects, the sprites are replaced, not argued over. [V evidence, owner's decision]
+2. **Audio**: no TBOI music or sound effects, ever. The music belongs to Ridiculon and Danny Baranowsky, not to Nicalis or McMillen, and Content ID claims hit every player and streamer regardless of goodwill. Original, CC0 or synthesised audio only. [V]
+3. **Money**: the mod is free. No Patreon, donations, sales or sponsorships attached to it. Every lawsuit and cease-and-desist found had monetisation or a full-game port in its profile. [V]
+4. **Names**: item and character names may be referenced; the package/mod name must not contain "The Binding of Isaac", "Rebirth", "Repentance" or publisher marks. README carries a non-affiliation disclaimer. [I]
+5. **Game files**: never commit or ship `Assembly-CSharp.dll` or any ETG file; reference assemblies come from NuGet. Thunderstore forbids distributing game files. [V]
+6. **Licenses**: MIT for code; the LICENSE scope note excludes the TBOI-derived assets from the grant. Alexandria and MtG API are MIT; ETGMod is MIT. [V]
+7. **Mechanics** (formulas, drop tables, item behaviours) are not copyrightable and may be re-implemented. [I]
+8. **If a blessing is sought**: McMillen has standing over the character and designs; the Rebirth sprite files are Nicalis-made. Nicalis has honoured McMillen-led deals (Four Souls, Fortnite) and has no record of answering individual modders. [V/I]
 
 ---
 
 ## 9. Open decisions for the project owner
 
-| # | Question | Default assumed in this document |
-|---|----------|----------------------------------|
-| Q1 | Is Isaac mode tied to playing Isaac, or a separate toggle usable by any Gungeoneer? | Tied to Isaac; Gunfig toggle later. |
-| Q2 | Do Isaac items ever appear for other characters? | No by default; opt-in config. |
-| Q3 | Keep ETG blanks and dodge roll in Isaac mode? | Keep both (ETG bullet density makes them necessary); config to disable. |
-| Q4 | Health model for v0.1: vanilla hearts + armor-as-soul-hearts, or custom soul/black hearts from day one? | Vanilla + armor re-skin; custom later. |
-| Q5 | Keep useful vanilla passives (companions, hearts, coolness items) in Isaac drops, or Isaac items only? | Isaac items only by default; config to mix. |
-| Q6 | Which TBOI version is the reference (Repentance assumed)? | Repentance (v1.7.x) values. |
-| Q7 | Character sprite source: who draws the animation set (about 30 clips)? Can v0.1 ship with a reduced placeholder set? | v0.1 reduced set over a vanilla base. |
-| Q8 | Isaac's nickname and the mod's public name (must avoid the TBOI trademark). | "Isaac" / working title to be chosen. |
-| Q9 | Co-op support level. | Must not crash; full parity later. |
+Decided by the project owner on 2026-10-05 unless marked open.
+
+| # | Question | Decision |
+|---|----------|----------|
+| Q1 | Is Isaac mode tied to playing Isaac, or a separate toggle usable by any Gungeoneer? | **Tied to Isaac.** No separate toggle. |
+| Q-tears | TBOI arc with range drop-off, or straight ETG-style bullets? | **Full TBOI reimplementation** of tear behaviour (arc, range, size, knockback). |
+| Q2 | Do Isaac items ever appear for other characters? | **No.** Isaac items exist only in Isaac runs. |
+| Q3 | Keep ETG blanks and dodge roll in Isaac mode? | **Remove both.** Replace with TBOI-analogue items (which ones: open), granted only if the player accepts the adaptation prompt at the start of the run (MOD-13, MOD-14). |
+| Q4 | Health model for v0.1? | **Vanilla hearts + armor re-skinned as soul hearts**; custom heart types later. |
+| Q5 | Keep useful vanilla ETG items in Isaac drops? | **Yes**, mixed with Isaac items; gun-only items excluded (MOD-8). Shop prices rescaled to Isaac income (ECO-1, ECO-2). |
+| Q6 | Which TBOI version is the reference? | Repentance (v1.7.x) values. |
+| Q-items | Is the v0.1 item list (ITM-10) acceptable? | **Yes for now**; to be adjusted later. |
+| Q7 | Character sprite source? | **Placeholders (flat coloured squares) for everything now.** Later, sprite sheets extracted from the owner's copy of TBOI, committed and shipped directly (CHR-14, §8). The converter tool is wired in from the start of M1. |
+| Q8 | Isaac's nickname and the mod's public name. | Open. Working title "Isaac Mode"; nickname candidate "The Child". |
+| Q9 | Co-op support level. | Open. Must not crash; parity later. |
+| Q-order | Milestone order M1 character, M2 loot, M3 items? | **Agreed.** |
+| Q-adapt | Which TBOI-analogue items compensate for the lost roll and blanks? | **Open**, owner to decide before MOD-14 is implemented. |
 
 ---
 
@@ -244,8 +259,8 @@ The full verified `StatType` list (31 members) is in [api-patterns.md](research/
 | Milestone | Content | Exit criterion |
 |-----------|---------|----------------|
 | M0 Skeleton | Project builds against NuGet refs, loads in game, logs in F2, Thunderstore manifest, CI if feasible, LICENSE, .gitignore | DLL loads with no errors |
-| M1 Tears + Isaac (placeholder art) | Character registered on a vanilla base with recoloured sprites, Tears gun with hidden sprite, stat mapping, gun lock | Isaac playable through floor 1 with no gun pickups possible |
-| M2 Isaac mode loot | Table swap, pedestal override, shop replacement, room-clear table, safety net, seeded runs | A full run yields zero guns and only Isaac items |
+| M1 Tears + Isaac (placeholder art) | Character registered on a vanilla base with square placeholder sprites, sheet converter tool (CHR-14), Tears gun with hidden sprite and full TBOI tear behaviour, stat mapping, gun lock, no blanks, no dodge roll | Isaac playable through floor 1 with no gun pickups, no roll, no blanks |
+| M2 Isaac mode loot and economy | Table swap, pedestal override, shop replacement, room-clear table, safety net, seeded runs, no enemy shells, shop price rescale, adaptation prompt with substitute items | A full run yields zero guns, TBOI-style drops and income, and the prompt works |
 | M3 Items v0.1 | 25–40 items from ITM-10, pickups, D6, synergies for multishot | Items drop with correct tiers and effects |
 | M4 Health and HUD | Armor-as-soul-hearts re-skin, 12-heart cap check, stat readout | HUD readable through a full run |
 | M5 Art and audio | Full original animation set, punch-out, foyer card, SFX bank | No placeholder art remains |
@@ -263,5 +278,5 @@ The full verified `StatType` list (31 members) is in [api-patterns.md](research/
 | Balance: 3 hearts and TBOI damage numbers do not fit ETG enemy HP and bullet density | Fun | Global damage scaling constant; keep blanks and dodge roll; playtest early |
 | Gun-biased assumptions baked into vanilla (`IsBossRewardForcedGun`, `GunVersusItemPercentChance`, treasure chest gun/item pairing) | Edge cases, log spam | Table swap plus safety net; test every reward source |
 | Other mods patching `Gun.Pickup` or loot (Modular, GungeonCraft) | Conflicts | Guard patches on Isaac mode; test against them |
-| IP takedown if any ripped asset slips in | Mod removed | Asset review before each release; original art only |
+| Rightsholder objects to the TBOI sprites | Package removed from Thunderstore | Accepted risk (§8); replace sprites with original art if it happens; never ship audio or attach money |
 | ETG 2 (announced 2025) is a different codebase | None for this mod | Target stays ETG 1 v2.1.9 |

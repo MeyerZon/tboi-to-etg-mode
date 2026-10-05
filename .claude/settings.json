@@ -22,9 +22,8 @@
       "Bash(dotnet --list-sdks)",
       "Bash(dotnet sln*)",
       "Bash(dotnet new*)",
-      "Bash(bash scripts/*)",
+      "Bash(bash scripts/package.sh*)",
       "Bash(scripts/package.sh*)",
-      "Bash(python3 *)",
       "Bash(unzip -l *)"
     ]
   }

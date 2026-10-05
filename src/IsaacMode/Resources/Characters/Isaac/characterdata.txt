@@ -1,5 +1,6 @@
 # Isaac (CHR-1 to CHR-4). Parsed by Alexandria's CharacterAPI Loader.
 # Comments are only allowed out here, not inside the <loadout> and <stats> blocks.
+# The <altguns> block must exist even when empty: Alexandria 0.5.10 fails the whole build without it.
 # The vanilla Bomb stands in for the Isaac-style bomb until the item exists (ITM-7).
 base: bullet
 name: Isaac
@@ -10,6 +11,8 @@ armor: 0
 isaac:tears infinite
 bomb
 </loadout>
+<altguns>
+</altguns>
 <stats>
 health: 3
 movementspeed: 7

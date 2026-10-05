@@ -28,7 +28,15 @@ namespace IsaacMode.Character
         public static void Init()
         {
             Data = Loader.BuildCharacter(ResourcePath, Plugin.GUID, FoyerPosition, false, Vector3.zero);
-            if (Data == null) return;
+            if (Data == null)
+            {
+                // Alexandria leaves its half-built prefab active in the scene when it fails; as a live
+                // PlayerController it throws every frame and drags the camera away, so remove it.
+                GameObject stray = GameObject.Find(StoredName);
+                if (stray != null) Object.Destroy(stray);
+                ETGModConsole.Log("Isaac Mode: Isaac could not be registered, see the CharAPI error above.");
+                return;
+            }
 
             Identity = Data.identity;
             Loader.SetupCustomBreachAnimation(StoredName, "select_idle", 6, tk2dSpriteAnimationClip.WrapMode.Loop);

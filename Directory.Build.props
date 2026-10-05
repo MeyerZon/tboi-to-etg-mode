@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <!-- Shared version for the DLL and the Thunderstore manifest; see scripts/package.sh -->
+    <ModVersion>0.1.0</ModVersion>
+    <Version>$(ModVersion)</Version>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,31 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh",
+            "timeout": 600,
+            "statusMessage": "Installing .NET SDK and restoring packages"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build*)",
+      "Bash(dotnet test*)",
+      "Bash(dotnet restore*)",
+      "Bash(dotnet --version)",
+      "Bash(dotnet --list-sdks)",
+      "Bash(dotnet sln*)",
+      "Bash(dotnet new*)",
+      "Bash(bash scripts/*)",
+      "Bash(scripts/package.sh*)",
+      "Bash(python3 *)",
+      "Bash(unzip -l *)"
+    ]
+  }
+}

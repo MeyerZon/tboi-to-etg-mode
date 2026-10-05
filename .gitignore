@@ -1,0 +1,27 @@
+# Build output
+bin/
+obj/
+artifacts/
+*.user
+*.suo
+.vs/
+.idea/
+*.swp
+
+# NuGet
+packages/
+*.nupkg
+
+# Developer-local paths (for example EtgManagedDirectoryPath); never commit game files
+local.props
+*.local.props
+.claude/settings.local.json
+
+# Thunderstore package output
+thunderstore/*.zip
+thunderstore/IsaacMode.dll
+thunderstore/README.md
+thunderstore/CHANGELOG.md
+
+# Game assemblies must never enter the repository
+Assembly-CSharp*.dll

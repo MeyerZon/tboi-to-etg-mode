@@ -3,6 +3,7 @@ using BepInEx;
 using HarmonyLib;
 using Alexandria.Misc;
 using IsaacMode.Character;
+using IsaacMode.Stats;
 using IsaacMode.Tears;
 
 namespace IsaacMode
@@ -36,6 +37,7 @@ namespace IsaacMode
         {
             try
             {
+                IsaacStats.Init();
                 // The gun must exist before the character: the loadout is resolved by console ID.
                 TearsGun.Init();
                 IsaacCharacter.Init();

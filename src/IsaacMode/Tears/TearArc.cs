@@ -16,6 +16,9 @@ namespace IsaacMode.Tears
         /// <summary>How far the tear sprite drops over its fall, in units (16 px each).</summary>
         public const float FallHeight = 0.75f;
 
+        /// <summary>Added to <see cref="FallHeight"/> for this flight; set from the tear height stat.</summary>
+        public float ExtraFallHeight;
+
         private static bool _warnedNoSpriteChild;
 
         private Projectile _projectile;
@@ -57,7 +60,7 @@ namespace IsaacMode.Tears
             if (_spriteTransform == null) return;
             float range = _projectile.baseData.range;
             float progress = range > 0f ? distance / range : 1f;
-            float drop = (float)TearFormulas.ArcDrop(progress) * FallHeight;
+            float drop = (float)TearFormulas.ArcDrop(progress) * Mathf.Max(0f, FallHeight + ExtraFallHeight);
             _spriteTransform.localPosition = _spriteRestPosition + Vector3.down * drop;
         }
 

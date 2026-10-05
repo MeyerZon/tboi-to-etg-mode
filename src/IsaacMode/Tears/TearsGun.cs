@@ -1,6 +1,7 @@
 using Alexandria.ItemAPI;
 using Gungeon;
 using IsaacMode.Core;
+using IsaacMode.Stats;
 using UnityEngine;
 
 namespace IsaacMode.Tears
@@ -71,6 +72,37 @@ namespace IsaacMode.Tears
             tear.shouldRotate = false;
             tear.gameObject.AddComponent<TearArc>();
             return tear;
+        }
+
+        /// <summary>Sets the time between tears on the player's Tears gun (STA-1). ETG's RateOfFire still applies on top.</summary>
+        public static void ApplyCooldown(PlayerController player, float cooldown)
+        {
+            if (player == null || player.inventory == null) return;
+            foreach (Gun held in player.inventory.AllGuns)
+            {
+                if (held == null || held.PickupObjectId != PickupId) continue;
+                // The game rebuilds the modified volley from the raw one on every stat change, so set both.
+                SetCooldown(held.RawSourceVolley, cooldown);
+                SetCooldown(held.modifiedVolley, cooldown);
+            }
+        }
+
+        private static void SetCooldown(ProjectileVolleyData volley, float cooldown)
+        {
+            if (volley == null || volley.projectiles == null) return;
+            foreach (ProjectileModule module in volley.projectiles)
+                module.cooldownTime = cooldown;
+        }
+
+        public override void PostProcessProjectile(Projectile projectile)
+        {
+            base.PostProcessProjectile(projectile);
+            PlayerController owner = gun != null ? gun.CurrentOwner as PlayerController : null;
+            if (owner == null || projectile == null) return;
+            IsaacStats stats = IsaacStats.For(owner);
+            projectile.baseData.damage *= stats.DamageFactor;
+            TearArc arc = projectile.GetComponent<TearArc>();
+            if (arc != null) arc.ExtraFallHeight = stats.TearHeight;
         }
 
         public override void OnSwitchedToPlayer(PlayerController owner, GunInventory inventory, Gun oldGun, bool isNewGun)

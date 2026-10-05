@@ -10,3 +10,4 @@
 - Build hardening: NuGet package source mapping, GitHub Actions pinned to commit SHAs.
 - Isaac cannot pick up or be handed other guns, cannot dodge roll, and never holds blanks; armor loss no longer fires a blank for him (CHR-8, MOD-13, HLT-5).
 - Tears follow the TBOI arc (level flight, then a fall at the end of their range), scale with damage and knock back by shot speed (CHR-7).
+- Custom Isaac stats (tears, luck, damage ups, flat damage, tear height) through StatAPI, driving fire rate, damage and arc height; `isaac addstat` console command (STA-1 to STA-3, ITM-4).

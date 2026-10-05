@@ -78,7 +78,7 @@ namespace IsaacMode.Core
         }
 
         /// <summary>Fraction of the range a tear flies level before it starts to fall.</summary>
-        public const double ArcLevelFraction = 0.6;
+        public const double ArcLevelFraction = 0.8;
 
         /// <summary>
         /// How far a tear has fallen, from 0 (still at firing height) to 1 (on the ground), for a

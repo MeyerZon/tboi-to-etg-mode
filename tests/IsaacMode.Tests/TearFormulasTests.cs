@@ -92,8 +92,8 @@ namespace IsaacMode.Tests
 
         [Theory]
         [InlineData(0.0, 0.0)]
-        [InlineData(0.6, 0.0)]
-        [InlineData(0.8, 0.25)]
+        [InlineData(0.8, 0.0)]
+        [InlineData(0.9, 0.25)]
         [InlineData(1.0, 1.0)]
         [InlineData(1.5, 1.0)]
         public void ArcStaysLevelThenFalls(double progress, double expected)

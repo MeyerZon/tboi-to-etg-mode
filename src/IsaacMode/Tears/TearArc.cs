@@ -11,7 +11,7 @@ namespace IsaacMode.Tears
     public class TearArc : MonoBehaviour
     {
         /// <summary>Knockback of a tear at shot speed 1.0, in ETG force units.</summary>
-        public const float BaseForce = 8f;
+        public const float BaseForce = 14f;
 
         /// <summary>How far the tear sprite drops over its fall, in units (16 px each).</summary>
         public const float FallHeight = 0.75f;

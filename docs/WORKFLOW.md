@@ -108,8 +108,9 @@ environment secret and ask for a release workflow.
 - Item icons: up to 30x30 px, 16 px = 1 world unit, avoid pure black on the outline.
 - Sounds: WAV files turned into a `.bnk` with `gen-gungeon-audio-bank.py` from pcrain's
   gungeon-modding-tools (Python, no Wwise needed).
-- **Only original art and audio.** Nothing may be copied from The Binding of Isaac. See
-  [`REQUIREMENTS.md`](REQUIREMENTS.md) section 8.
+- Sprites extracted from the owner's copy of The Binding of Isaac are allowed and credited; **no TBOI
+  music or sound effects, ever**. See [`REQUIREMENTS.md`](REQUIREMENTS.md) section 8 and
+  [`research/crossover-precedents.md`](research/crossover-precedents.md) for why.
 
 ## 8. Where things live
 

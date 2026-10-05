@@ -3,7 +3,7 @@ Mod for etg, that will add Isaac, and Isaac gamemode into the game (standard tbo
 
 ## Status
 
-Milestone M0 (project skeleton): builds and tests run, no gameplay yet.
+Milestone M1 in progress: Isaac is playable with the Tears weapon. [Where we stopped](docs/LAST_SESSION.md) has the current state and the next check.
 
 - [TODO](TODO.md): every milestone and task, with what is done.
 - [How to work on this mod](docs/WORKFLOW.md): the cloud-session loop, getting builds, testing in game, releasing.

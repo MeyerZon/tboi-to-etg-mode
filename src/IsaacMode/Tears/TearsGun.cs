@@ -21,6 +21,10 @@ namespace IsaacMode.Tears
 
         public static int PickupId = -1;
 
+        /// <summary>The tear sprite shown in the HUD gun box in place of the gun's own sprite.</summary>
+        public static tk2dSpriteCollectionData HudIconCollection;
+        public static int HudIconId = -1;
+
         public static void Init()
         {
             Gun gun = ETGMod.Databases.Items.NewGun("Tears", "isaac_tears");
@@ -55,6 +59,18 @@ namespace IsaacMode.Tears
 
             ETGMod.Databases.Items.Add(gun, false, "ANY");
             PickupId = gun.PickupObjectId;
+
+            try
+            {
+                tk2dSpriteCollectionData collection = gun.GetSprite().Collection;
+                HudIconId = SpriteBuilder.AddSpriteToCollection("IsaacMode/Resources/Guns/Tears/tear_icon", collection, "isaac_tear_icon");
+                HudIconCollection = collection;
+            }
+            catch (System.Exception e)
+            {
+                // Cosmetic only: without the icon the HUD keeps showing the gun's own sprite.
+                ETGModConsole.Log("Isaac Mode: could not set up the tear HUD icon: " + e.Message);
+            }
         }
 
         private static Projectile BuildTear(Gun source)

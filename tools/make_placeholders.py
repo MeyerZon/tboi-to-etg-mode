@@ -6,7 +6,8 @@ so the facing direction can be read in game. Standard library only, so it runs a
 
     python tools/make_placeholders.py
 
-Output goes to src/IsaacMode/Resources/Characters/Isaac/ and replaces what is there. The folder
+Output goes to src/IsaacMode/Resources/Characters/Isaac/ (plus the Tears HUD icon under
+Resources/Guns/Tears/) and replaces what is there. The folder
 and file names are the ones Alexandria's CharacterAPI looks for (docs/research/api-patterns.md, 1.3).
 Once the real sheets are converted (CHR-14) this script is no longer needed for those clips.
 """
@@ -120,8 +121,25 @@ def body(path, clip, frame=0):
     write_png(path, BODY_W, BODY_H, pixel_at)
 
 
+def tear_icon(path, size=9):
+    """A light blue disc with a highlight: the HUD icon for the Tears weapon."""
+    centre = (size - 1) / 2.0
+    radius = size / 2.0
+
+    def pixel_at(x, y):
+        dx, dy = x - centre, y - centre
+        if dx * dx + dy * dy > radius * radius:
+            return (0, 0, 0, 0)
+        if (x, y) in ((2, 2), (3, 2), (2, 3)):
+            return (235, 248, 255, 255)
+        return (120, 190, 240, 255)
+
+    write_png(path, size, size, pixel_at)
+
+
 def main():
     root = os.path.normpath(ROOT)
+    tear_icon(os.path.join(root, "..", "..", "Guns", "Tears", "tear_icon.png"))
     for stale in ("newspritesetup", "icon.png", "facecard.png", "bosscard_001.png"):
         target = os.path.join(root, stale)
         if os.path.isdir(target):
